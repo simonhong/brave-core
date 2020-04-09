@@ -7,9 +7,13 @@
 
 #include <limits>
 #include <utility>
+#include <iostream>
 
 #include "base/command_line.h"
+#include "base/files/file_path.h"
 #include "base/files/file_util.h"
+#include "base/path_service.h"
+#include "chrome/common/chrome_paths.h"
 #include "base/files/important_file_writer.h"
 #include "base/guid.h"
 #include "base/logging.h"
@@ -40,6 +44,7 @@
 #include "brave/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
 #include "brave/components/brave_ads/browser/notification_helper.h"
 #include "chrome/browser/browser_process.h"
+#include "brave/browser/brave_browser_process_impl.h"
 #include "chrome/browser/notifications/notification_display_service.h"
 #include "chrome/browser/profiles/profile.h"
 #if !defined(OS_ANDROID)
@@ -284,11 +289,35 @@ AdsServiceImpl::AdsServiceImpl(Profile* profile) :
   MaybeShowOnboarding();
 #endif
 
+  g_brave_browser_process->usermodel_parameter_service()->AddObserver(this);
+  std::cout << "*** DEBUG A: AdsService added as observer\n";
+
+  // TODO(Moritz Haller): Receive path on startup, call explicitely?
+  // g_brave_browser_process->usermodel_parameter_service()->GetManifestPath();
+
   MaybeStart(false);
 }
 
 AdsServiceImpl::~AdsServiceImpl() {
   file_task_runner_->DeleteSoon(FROM_HERE, bundle_state_backend_.release());
+}
+
+void AdsServiceImpl::OnUserModelUpdated(
+    const std::string& model_id,
+    const base::FilePath& model_path) {
+  std::cout << "*** DEBUG 3: AdsService got notified\n";
+  if (!connected()) {
+    std::cout << "*** DEBUG 3a\n";
+    return;
+  }
+
+  if (model_path.empty()) {
+    std::cout << "*** DEBUG 3b\n";
+    return;
+  }
+
+  const std::string model_path_string = model_path.value();
+  bat_ads_->OnUserModelUpdated(model_id, model_path_string);
 }
 
 bool AdsServiceImpl::IsSupportedLocale() const {
@@ -357,6 +386,20 @@ void AdsServiceImpl::OnPageLoaded(
   if (!connected()) {
     return;
   }
+
+  // TODO(Moritz Haller): Delete, just for debugging
+  std::cout << "*** DEBUG B: Call OnUserModelUpdated in constructor\n";
+
+  const std::string model_path_raw = "/Users/moritzhaller/Library/Application Support/BraveSoftware/Brave-Browser-Development/oldkbaailkiinmopalbhaidpjdndifpa/1.0.3/purchase-intent-classifier-en.json";
+  base::FilePath model_path = base::FilePath::FromUTF8Unsafe(model_path_raw);
+
+  std::string kPurchaseIntentModelId = "loighdbokjikidnmlfddgidbkhodedgm";
+
+  // base::FilePath model_path = g_brave_browser_process->
+  //     usermodel_parameter_service()->GetModelPath(kPurchaseIntentModelId);
+
+  std::cout << "*** DEBUG C: " << model_path.value() << "\n";
+  OnUserModelUpdated(kPurchaseIntentModelId, model_path);
 
   bat_ads_->OnPageLoaded(url, content);
 }

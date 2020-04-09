@@ -24,6 +24,7 @@
 #include "brave/components/brave_ads/browser/ads_service.h"
 #include "brave/components/brave_ads/browser/background_helper.h"
 #include "brave/components/brave_ads/browser/notification_helper.h"
+#include "brave/components/brave_usermodel_parameters/browser/brave_usermodel_parameter_service.h"
 #include "brave/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
 #include "brave/components/brave_rewards/browser/rewards_notification_service_observer.h"
 #include "chrome/browser/notifications/notification_handler.h"
@@ -35,6 +36,7 @@
 #include "ui/base/idle/idle.h"
 
 using brave_rewards::RewardsNotificationService;
+using brave_usermodel_parameters::UsermodelParameterService;
 
 class NotificationDisplayService;
 class Profile;
@@ -60,6 +62,7 @@ class AdsServiceImpl : public AdsService,
                        public ads::AdsClient,
                        public history::HistoryServiceObserver,
                        BackgroundHelper::Observer,
+                       public UsermodelParameterService::Observer,
                        public base::SupportsWeakPtr<AdsServiceImpl> {
  public:
   // AdsService implementation
@@ -68,6 +71,11 @@ class AdsServiceImpl : public AdsService,
 
   AdsServiceImpl(const AdsServiceImpl&) = delete;
   AdsServiceImpl& operator=(const AdsServiceImpl&) = delete;
+
+  // BraveUserModelInstaller::Observer
+  void OnUserModelUpdated(
+      const std::string& model_name,
+      const base::FilePath& model_path) override;
 
   bool IsSupportedLocale() const override;
   bool IsNewlySupportedLocale() override;

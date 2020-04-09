@@ -142,6 +142,7 @@ source_set("browser_process") {
     "//brave/components/ntp_background_images/browser",
     "//brave/components/ntp_tiles",
     "//brave/components/p3a",
+    "//brave/components/brave_usermodel_parameters/browser",
     "//brave/components/resources",
     "//brave/components/services:brave_content_manifest_overlays",
     "//brave/components/speedreader:buildflags",

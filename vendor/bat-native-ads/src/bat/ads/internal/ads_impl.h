@@ -28,6 +28,7 @@
 #include "bat/ads/internal/timer.h"
 #include "bat/usermodel/user_model.h"
 #include "bat/ads/internal/purchase_intent/purchase_intent_classifier.h"
+#include "base/files/file_path.h"
 
 namespace ads {
 
@@ -76,6 +77,11 @@ class AdsImpl : public Ads {
   void OnUserModelLoaded(
       const Result result,
       const std::string& json);
+  void OnUserModelUpdated(
+      const std::string& model_id,
+      const std::string& model_path) override;
+  std::string GetUserModelData(
+      const base::FilePath& model_Path);
   void InitializeUserModel(
       const std::string& json,
       const std::string& language);

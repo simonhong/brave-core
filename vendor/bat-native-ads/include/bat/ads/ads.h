@@ -221,6 +221,11 @@ class ADS_EXPORT Ads {
       const std::string& creative_set_id,
       const bool flagged) = 0;
 
+  // TODO(Moritz Haller): Ddd description
+  virtual void OnUserModelUpdated(
+      const std::string& model_id,
+      const std::string& model_path) = 0;
+
  private:
   // Not copyable, not assignable
   Ads(const Ads&) = delete;

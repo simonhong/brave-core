@@ -50,6 +50,12 @@
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/time/time.h"
+#include "base/json/json_reader.h"
+#include "base/files/file_util.h"
+#include "base/files/file_path.h"
+#include "base/task/post_task.h"
+#include "base/path_service.h"
+#include "chrome/common/chrome_paths.h"
 
 #if defined(OS_ANDROID)
 #include "base/system/sys_info.h"
@@ -616,6 +622,63 @@ void AdsImpl::ChangeLocale(
   }
 
   LoadUserModel();
+}
+
+void AdsImpl::OnUserModelUpdated(
+    const std::string& model_id,
+    const std::string& model_path) {
+  BLOG(INFO) << "*** DEBUG 5: " << "Ads Impl got notified, model_path: "
+      << model_path;
+
+  base::FilePath path;
+  base::PathService::Get(chrome::DIR_USER_DATA, &path);
+
+  base::FilePath full_model_path =
+      base::FilePath::FromUTF8Unsafe(model_path);
+  std::vector<base::FilePath::StringType> full_model_path_components;
+  full_model_path.GetComponents(&full_model_path_components);
+  std::vector<base::FilePath::StringType> part_model_path_components(
+      full_model_path_components.end() - 3,
+      full_model_path_components.end());
+  base::FilePath part_model_path;
+  for (const auto& component : part_model_path_components) {
+    part_model_path = part_model_path.Append(component);
+  }
+
+  path = path.Append(part_model_path);
+  // std::string model_json = GetUserModelData(path);
+  std::string model_json;
+  if (PathExists(path)) {
+    BLOG(INFO) << "*** DEBUG 6 loading model at: " << path;
+    base::ReadFileToString(path, &model_json);
+    BLOG(INFO) << "*** DEBUG 6 with json: " << model_json;
+  }
+  BLOG(INFO) << "*** DEBUG 8 actual path exists" << PathExists(full_model_path);
+  BLOG(INFO) << "*** DEBUG 9 dummy path exists" <<
+      PathExists(full_model_path.AppendASCII("foobar"));
+
+  // if (id == purchase intent) {
+//   if (json_string.empty()) {
+//     BLOG(INFO) << ": User model data is empty";
+//     return;
+//   }
+
+//   base::Optional<base::Value> user_model_value =
+//       base::JSONReader::Read(json_string);
+
+//   if (!user_model_value) {
+//     BLOG(INFO) << ": User model data is invalid";
+//     return;
+//   }
+  // }
+}
+
+std::string AdsImpl::GetUserModelData(
+    const base::FilePath& model_path) {
+  std::string contents;
+  bool success = base::ReadFileToString(model_path, &contents);
+  BLOG(INFO) << "*** DEBUG read file success " << success;
+  return contents;
 }
 
 void AdsImpl::OnPageLoaded(
