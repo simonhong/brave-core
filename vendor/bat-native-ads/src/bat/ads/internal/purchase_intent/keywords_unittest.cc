@@ -7,7 +7,7 @@
 #include <memory>
 #include <tuple>
 
-#include "bat/ads/internal/ads_client_mock.h"
+#include "bat/ads/ads_client_mock.h"
 #include "bat/ads/internal/ads_impl.h"
 
 #include "testing/gtest/include/gtest/gtest.h"
@@ -16,7 +16,7 @@
 
 using ::testing::_;
 
-// npm run test -- brave_unit_tests --filter=AdsPurchaseIntentKeywords*
+// npm run test -- brave_unit_tests --filter=TerryToDo*
 
 namespace {
 
@@ -68,12 +68,12 @@ namespace ads {
 
 class AdsPurchaseIntentKeywordsTest : public ::testing::Test {
  protected:
-  std::unique_ptr<MockAdsClient> mock_ads_client_;
+  std::unique_ptr<AdsClientMock> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
 
-  AdsPurchaseIntentKeywordsTest() :
-      mock_ads_client_(std::make_unique<MockAdsClient>()),
-      ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
+  AdsPurchaseIntentKeywordsTest()
+      : mock_ads_client_(std::make_unique<AdsClientMock>()),
+        ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
@@ -97,7 +97,8 @@ class AdsPurchaseIntentKeywordsTest : public ::testing::Test {
   // Objects declared here can be used by all tests in the test case
 };
 
-TEST_F(AdsPurchaseIntentKeywordsTest, MatchesSegmentKeywords) {
+TEST_F(AdsPurchaseIntentKeywordsTest,
+    MatchesSegmentKeywords) {
   for (const auto& search_query : kTestSearchqueries) {
     // Arrange
     auto query = search_query.keywords;
@@ -111,7 +112,8 @@ TEST_F(AdsPurchaseIntentKeywordsTest, MatchesSegmentKeywords) {
   }
 }
 
-TEST_F(AdsPurchaseIntentKeywordsTest, MatchesFunnelKeywords) {
+TEST_F(AdsPurchaseIntentKeywordsTest,
+    MatchesFunnelKeywords) {
   for (const auto& search_query : kTestSearchqueries) {
     // Arrange
     auto query = search_query.keywords;
