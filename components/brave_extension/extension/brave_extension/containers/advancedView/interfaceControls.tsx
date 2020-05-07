@@ -10,7 +10,7 @@ import HTTPSUpgradesControl from './controls/httpsUpgradesControl'
 
 // Types
 import { BlockAdsTrackers, HttpsEverywhereToggled } from '../../types/actions/shieldsPanelActions'
-import { BlockOptions } from '../../types/other/blockTypes'
+import { BlockFPOptions, BlockOptions } from '../../types/other/blockTypes'
 
 interface CommonProps {
   isBlockedListOpen: boolean
@@ -26,6 +26,7 @@ interface AdsTrackersProps {
   trackers: BlockOptions
   trackersBlocked: number
   trackersBlockedResources: Array<string>
+  cosmeticFiltering: BlockFPOptions
   blockAdsTrackers: BlockAdsTrackers
 }
 
@@ -55,6 +56,7 @@ export default class InterfaceControls extends React.PureComponent<Props, {}> {
           trackers={this.props.trackers}
           trackersBlocked={this.props.trackersBlocked}
           trackersBlockedResources={this.props.trackersBlockedResources}
+          cosmeticFiltering={this.props.cosmeticFiltering}
           blockAdsTrackers={this.props.blockAdsTrackers}
         />
         <HTTPSUpgradesControl

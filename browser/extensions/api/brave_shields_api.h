@@ -84,6 +84,30 @@ class BraveShieldsGetCosmeticFilteringEnabledFunction
   ResponseAction Run() override;
 };
 
+class BraveShieldsSetCosmeticFilteringControlTypeFunction :
+    public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("braveShields.setCosmeticFilteringControlType",
+                             UNKNOWN)
+
+ protected:
+  ~BraveShieldsSetCosmeticFilteringControlTypeFunction() override {}
+
+  ResponseAction Run() override;
+};
+
+class BraveShieldsGetCosmeticFilteringControlTypeFunction :
+    public ExtensionFunction {
+ public:
+  DECLARE_EXTENSION_FUNCTION("braveShields.getCosmeticFilteringControlType",
+                             UNKNOWN)
+
+ protected:
+  ~BraveShieldsGetCosmeticFilteringControlTypeFunction() override {}
+
+  ResponseAction Run() override;
+};
+
 class BraveShieldsSetAdControlTypeFunction : public ExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("braveShields.setAdControlType", UNKNOWN)

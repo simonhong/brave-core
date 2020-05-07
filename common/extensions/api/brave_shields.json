@@ -178,6 +178,48 @@
         ]
       },
       {
+        "name": "setCosmeticFilteringControlType",
+        "type": "function",
+        "description": "Set cosmetic filtering control type for a url",
+        "parameters": [
+          {
+            "name": "controlType",
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "type": "string"
+          },
+          {
+            "type": "function",
+            "name": "callback",
+            "optional": true,
+            "parameters": []
+          }
+        ]
+      },
+      {
+        "name": "getCosmeticFilteringControlType",
+        "type": "function",
+        "description": "Get cosmetic filtering control type for a url",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string"
+          },
+          {
+            "type": "function",
+            "name": "callback",
+            "parameters": [
+              {
+                "name": "controlType",
+                "type": "string"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "name": "setAdControlType",
         "type": "function",
         "description": "Set ads control type for a url",

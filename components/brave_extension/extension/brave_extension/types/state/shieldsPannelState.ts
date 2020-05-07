@@ -8,7 +8,8 @@ import { NoScriptInfo } from '../other/noScriptInfo'
 import { SettingsData } from '../other/settingsTypes'
 
 export interface Tab {
-  cosmeticBlocking: boolean
+  cosmeticFiltering: BlockFPOptions
+  cosmeticFilteringFlag: boolean
   ads: BlockOptions
   adsBlocked: number
   controlsOpen: boolean

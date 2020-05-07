@@ -124,6 +124,7 @@ export default class Shields extends React.PureComponent<Props, State> {
                 trackers={shieldsPanelTabData.trackers}
                 trackersBlocked={shieldsPanelTabData.trackersBlocked}
                 trackersBlockedResources={shieldsPanelTabData.trackersBlockedResources}
+                cosmeticFiltering={shieldsPanelTabData.cosmeticFiltering}
                 blockAdsTrackers={actions.blockAdsTrackers}
                 // HTTPS Upgrades
                 httpsRedirected={shieldsPanelTabData.httpsRedirected}

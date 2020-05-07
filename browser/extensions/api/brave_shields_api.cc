@@ -221,6 +221,50 @@ BraveShieldsGetCosmeticFilteringEnabledFunction::Run() {
   return RespondNow(OneArgument(std::move(result)));
 }
 
+ExtensionFunction::ResponseAction
+BraveShieldsSetCosmeticFilteringControlTypeFunction::Run() {
+  std::unique_ptr<brave_shields::SetCosmeticFilteringControlType::Params>
+    params(
+      brave_shields::SetCosmeticFilteringControlType::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  const GURL url(params->url);
+  // we don't allow setting defaults from the extension
+  if (url.is_empty() || !url.is_valid()) {
+    return RespondNow(Error(kInvalidUrlError, params->url));
+  }
+
+  auto control_type = ControlTypeFromString(params->control_type);
+  if (control_type == ControlType::INVALID) {
+    return RespondNow(Error(kInvalidControlTypeError, params->control_type));
+  }
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  ::brave_shields::SetCosmeticFilteringControlType(profile, control_type, url);
+
+  return RespondNow(NoArguments());
+}
+
+ExtensionFunction::ResponseAction
+BraveShieldsGetCosmeticFilteringControlTypeFunction::Run() {
+  std::unique_ptr<brave_shields::GetCosmeticFilteringControlType::Params>
+    params(
+      brave_shields::GetCosmeticFilteringControlType::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  const GURL url(params->url);
+  // we don't allow getting defaults from the extension
+  if (url.is_empty() || !url.is_valid()) {
+    return RespondNow(Error(kInvalidUrlError, params->url));
+  }
+
+  Profile* profile = Profile::FromBrowserContext(browser_context());
+  auto type = ::brave_shields::GetCosmeticFilteringControlType(profile, url);
+  auto result = std::make_unique<base::Value>(ControlTypeToString(type));
+
+  return RespondNow(OneArgument(std::move(result)));
+}
+
 ExtensionFunction::ResponseAction BraveShieldsSetAdControlTypeFunction::Run() {
   std::unique_ptr<brave_shields::SetAdControlType::Params> params(
       brave_shields::SetAdControlType::Params::Create(*args_));
