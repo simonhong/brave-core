@@ -90,6 +90,8 @@ class BatAdsClientMojoBridge
       const std::string& name,
       ads::ResultCallback callback) override;
 
+  std::string GetPath() override;
+
   std::string LoadJsonSchema(
       const std::string& name) override;
 

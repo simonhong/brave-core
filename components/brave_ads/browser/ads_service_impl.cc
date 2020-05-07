@@ -2022,11 +2022,12 @@ void AdsServiceImpl::URLRequest(
 }
 
 void AdsServiceImpl::Save(
-    const std::string& name,
+    const std::string& path,
     const std::string& value,
     ads::ResultCallback callback) {
-  base::ImportantFileWriter writer(
-      base_path_.AppendASCII(name), file_task_runner_);
+  base::FilePath file_path(path);
+
+  base::ImportantFileWriter writer(file_path, file_task_runner_);
 
   writer.RegisterOnNextWriteCallbacks(
       base::Closure(),
@@ -2040,22 +2041,30 @@ void AdsServiceImpl::Save(
 }
 
 void AdsServiceImpl::Load(
-    const std::string& name,
+    const std::string& path,
     ads::LoadCallback callback) {
+  base::FilePath file_path(path);
+
   base::PostTaskAndReplyWithResult(file_task_runner_.get(), FROM_HERE,
-      base::BindOnce(&LoadOnFileTaskRunner, base_path_.AppendASCII(name)),
+      base::BindOnce(&LoadOnFileTaskRunner, file_path),
       base::BindOnce(&AdsServiceImpl::OnLoaded,
                      AsWeakPtr(),
                      std::move(callback)));
 }
 
 void AdsServiceImpl::Reset(
-    const std::string& name,
+    const std::string& path,
     ads::ResultCallback callback) {
+  base::FilePath file_path(path);
+
   base::PostTaskAndReplyWithResult(file_task_runner_.get(), FROM_HERE,
-      base::BindOnce(&ResetOnFileTaskRunner, base_path_.AppendASCII(name)),
+      base::BindOnce(&ResetOnFileTaskRunner, file_path),
       base::BindOnce(&AdsServiceImpl::OnReset,
           AsWeakPtr(), std::move(callback)));
+}
+
+std::string AdsServiceImpl::GetPath() {
+  return base_path_.value();
 }
 
 std::string AdsServiceImpl::LoadJsonSchema(

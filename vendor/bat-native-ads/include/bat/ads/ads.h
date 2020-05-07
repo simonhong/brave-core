@@ -42,15 +42,6 @@ extern const char _bundle_schema_resource_name[];
 // Catalog schema resource name
 extern const char _catalog_schema_resource_name[];
 
-// Sample bundle resource name
-extern const char _sample_bundle_resource_name[];
-
-// Catalog resource name
-extern const char _catalog_resource_name[];
-
-// Client resource name
-extern const char _client_resource_name[];
-
 // Returns |true| if the locale is supported; otherwise returns |false|
 bool IsSupportedLocale(
     const std::string& locale);

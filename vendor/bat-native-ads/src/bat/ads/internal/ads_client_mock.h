@@ -78,7 +78,7 @@ class MockAdsClient : public AdsClient {
       URLRequestCallback callback));
 
   MOCK_METHOD3(Save, void(
-      const std::string& name,
+      const std::string& path,
       const std::string& value,
       ResultCallback callback));
 
@@ -87,8 +87,10 @@ class MockAdsClient : public AdsClient {
       ResultCallback callback));
 
   MOCK_METHOD2(Load, void(
-      const std::string& name,
+      const std::string& path,
       LoadCallback callback));
+
+  MOCK_METHOD1(GetPath, std::string());
 
   MOCK_METHOD1(LoadJsonSchema, std::string(
       const std::string& name));

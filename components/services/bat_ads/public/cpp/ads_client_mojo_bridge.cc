@@ -161,6 +161,19 @@ void AdsClientMojoBridge::ShouldShowNotifications(
   std::move(callback).Run(ads_client_->ShouldShowNotifications());
 }
 
+bool AdsClientMojoBridge::GetPath(
+    std::string* out_path) {
+  DCHECK(out_path);
+  *out_path = ads_client_->GetPath();
+  return true;
+}
+
+void AdsClientMojoBridge::GetPath(
+    GetPathCallback callback) {
+  std::move(callback).Run(ads_client_->GetPath());
+}
+
+
 bool AdsClientMojoBridge::LoadJsonSchema(
     const std::string& name,
     std::string* out_json) {
@@ -235,13 +248,13 @@ void AdsClientMojoBridge::OnLoad(
 }
 
 void AdsClientMojoBridge::Load(
-    const std::string& name,
+    const std::string& path,
     LoadCallback callback) {
   // this gets deleted in OnLoad
   auto* holder =
       new CallbackHolder<LoadCallback>(AsWeakPtr(), std::move(callback));
   ads_client_->Load(
-      name, std::bind(AdsClientMojoBridge::OnLoad, holder, _1, _2));
+      path, std::bind(AdsClientMojoBridge::OnLoad, holder, _1, _2));
 }
 
 // static
@@ -258,14 +271,14 @@ void AdsClientMojoBridge::OnSave(
 }
 
 void AdsClientMojoBridge::Save(
-    const std::string& name,
+    const std::string& path,
     const std::string& value,
     SaveCallback callback) {
   // this gets deleted in OnSave
   auto* holder =
       new CallbackHolder<SaveCallback>(AsWeakPtr(), std::move(callback));
-  ads_client_->Save(name, value,
-      std::bind(AdsClientMojoBridge::OnSave, holder, _1));
+  ads_client_->Save(
+      path, value, std::bind(AdsClientMojoBridge::OnSave, holder, _1));
 }
 
 // static
@@ -282,12 +295,12 @@ void AdsClientMojoBridge::OnReset(
 }
 
 void AdsClientMojoBridge::Reset(
-    const std::string& name,
+    const std::string& path,
     ResetCallback callback) {
   // this gets deleted in OnReset
   auto* holder =
       new CallbackHolder<ResetCallback>(AsWeakPtr(), std::move(callback));
-  ads_client_->Reset(name, std::bind(AdsClientMojoBridge::OnReset, holder, _1));
+  ads_client_->Reset(path, std::bind(AdsClientMojoBridge::OnReset, holder, _1));
 }
 
 // static

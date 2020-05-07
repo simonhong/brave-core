@@ -40,6 +40,8 @@ class Catalog {
   void Reset(ResultCallback callback);
 
  private:
+  std::string GetPath() const;
+
   AdsClient* ads_client_;  // NOT OWNED
 
   std::shared_ptr<CatalogState> catalog_state_;

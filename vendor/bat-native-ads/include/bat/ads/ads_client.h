@@ -158,7 +158,7 @@ class ADS_EXPORT AdsClient {
   // — |Result| should be set to |SUCCESS| if successful; otherwise, should be
   // set to |FAILED|
   virtual void Save(
-      const std::string& name,
+      const std::string& path,
       const std::string& value,
       ResultCallback callback) = 0;
 
@@ -173,7 +173,11 @@ class ADS_EXPORT AdsClient {
   // — |Result| should be set to |SUCCESS| if successful; otherwise, should be
   // set to |FAILED|. |value| should contain the persisted value
   virtual void Load(
-      const std::string& name, LoadCallback callback) = 0;
+      const std::string& path,
+      LoadCallback callback) = 0;
+
+  // Should return the path
+  virtual std::string GetPath() = 0;
 
   // Should load a JSON schema from persistent storage, schemas are a dependency
   // of the application and should be bundled accordingly, the following file
@@ -194,7 +198,7 @@ class ADS_EXPORT AdsClient {
   // — |Result| should be set to |SUCCESS| if successful; otherwise, should be
   // set to |FAILED|
   virtual void Reset(
-      const std::string& name, ResultCallback callback) = 0;
+      const std::string& path, ResultCallback callback) = 0;
 
   // Should fetch all creative ad notifications for the specified |category|
   // where the current time is between the ad |start_timestamp| and

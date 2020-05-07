@@ -55,14 +55,25 @@ IssuersInfo Catalog::GetIssuers() const {
 }
 
 void Catalog::Save(const std::string& json, ResultCallback callback) {
-  ads_client_->Save(_catalog_resource_name, json, callback);
+  const std::string path = GetPath();
+  ads_client_->Save(path, json, callback);
 }
 
 void Catalog::Reset(ResultCallback callback) {
-  ads_client_->Reset(_catalog_resource_name, callback);
+  const std::string path = GetPath();
+  ads_client_->Reset(path, callback);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+std::string Catalog::GetPath() const {
+  const std::string path = ads_client_->GetPath();
+  base::FilePath file_path(path);
+
+  file_path.AppendASCII("catalog.json");
+
+  return file_path.value();
+}
 
 bool Catalog::HasChanged(const std::string& current_catalog_id) {
   if (current_catalog_id.empty()) {
