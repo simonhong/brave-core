@@ -62,6 +62,9 @@ const char kCookieScript[] =
 const char kReferrerScript[] =
     "domAutomationController.send(document.referrer);";
 
+const char kTitleScript[] =
+  "domAutomationController.send(document.title);";
+
 }  // namespace
 
 class BraveContentSettingsAgentImplBrowserTest : public InProcessBrowserTest {
@@ -375,6 +378,30 @@ class BraveContentSettingsAgentImplV2BrowserTest
  private:
   base::test::ScopedFeatureList scoped_feature_list_;
 };
+
+IN_PROC_BROWSER_TEST_F(BraveContentSettingsAgentImplV2BrowserTest,
+                       WebGLReadPixels) {
+  std::string origin = "a.com";
+  std::string path = "/webgl/readpixels.html";
+
+  // Farbling level: maximum
+  // WebGL readPixels(): blocked
+  BlockFingerprinting();
+  NavigateToURLUntilLoadStop(origin, path);
+  EXPECT_EQ(ExecScriptGetStr(kTitleScript, contents()), "0");
+
+  // Farbling level: balanced (default)
+  // WebGL readPixels(): allowed
+  SetFingerprintingDefault();
+  NavigateToURLUntilLoadStop(origin, path);
+  EXPECT_EQ(ExecScriptGetStr(kTitleScript, contents()), "255");
+
+  // Farbling level: off
+  // WebGL readPixels(): allowed
+  AllowFingerprinting();
+  NavigateToURLUntilLoadStop(origin, path);
+  EXPECT_EQ(ExecScriptGetStr(kTitleScript, contents()), "255");
+}
 
 IN_PROC_BROWSER_TEST_F(BraveContentSettingsAgentImplV2BrowserTest,
                        MAYBE_FarbleGetImageData) {
