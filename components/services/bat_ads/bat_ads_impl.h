@@ -113,7 +113,7 @@ class BatAdsImpl :
       const std::string& creative_set_id,
       const bool flagged,
       ToggleFlagAdCallback callback) override;
-  void OnUserModelUpdated(
+  void OnUserModelFilesUpdated(
       const std::string& model_name,
       const std::string& model_path) override;
 

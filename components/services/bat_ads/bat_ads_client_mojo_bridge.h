@@ -53,6 +53,8 @@ class BatAdsClientMojoBridge
   void LoadUserModelForLanguage(
       const std::string& language,
       ads::LoadCallback callback) const override;
+  std::string GetUserModelFilePath(
+      const std::string& model_name) override;
 
   void ShowNotification(
       std::unique_ptr<ads::AdNotificationInfo> info) override;

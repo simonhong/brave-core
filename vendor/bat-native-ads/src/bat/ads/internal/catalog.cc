@@ -10,6 +10,7 @@
 #include "bat/ads/internal/json_helper.h"
 #include "bat/ads/internal/static_values.h"
 #include "bat/ads/internal/logging.h"
+#include "base/files/file_path.h"
 
 namespace ads {
 
@@ -70,7 +71,7 @@ std::string Catalog::GetPath() const {
   const std::string path = ads_client_->GetPath();
   base::FilePath file_path(path);
 
-  file_path.AppendASCII("catalog.json");
+  file_path = file_path.AppendASCII("catalog.json");
 
   return file_path.value();
 }

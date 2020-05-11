@@ -62,8 +62,8 @@ namespace speedreader {
 class SpeedreaderWhitelist;
 }
 
-namespace brave_usermodel_parameters {
-class UsermodelParameterService;
+namespace brave_user_model_installer {
+class UserModelFileService;
 }
 
 class BraveBrowserProcessImpl : public BrowserProcessImpl {
@@ -105,8 +105,8 @@ class BraveBrowserProcessImpl : public BrowserProcessImpl {
 #if BUILDFLAG(ENABLE_SPEEDREADER)
   speedreader::SpeedreaderWhitelist* speedreader_whitelist();
 #endif
-  brave_usermodel_parameters::UsermodelParameterService*
-      usermodel_parameter_service();
+  brave_user_model_installer::UserModelFileService*
+      user_model_file_service();
 
  private:
   // BrowserProcessImpl overrides:
@@ -168,8 +168,8 @@ class BraveBrowserProcessImpl : public BrowserProcessImpl {
   std::unique_ptr<speedreader::SpeedreaderWhitelist> speedreader_whitelist_;
 #endif
 
-  std::unique_ptr<brave_usermodel_parameters::UsermodelParameterService>
-      usermodel_parameter_service_;
+  std::unique_ptr<brave_user_model_installer::UserModelFileService>
+      user_model_file_service_;
 
   SEQUENCE_CHECKER(sequence_checker_);
 

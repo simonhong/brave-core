@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_COMPONENTS_BRAVE_USERMODEL_PARAMETERS_BRAVE_USERMODEL_PARAMETER_SERVICE_H_
-#define BRAVE_COMPONENTS_BRAVE_USERMODEL_PARAMETERS_BRAVE_USERMODEL_PARAMETER_SERVICE_H_
+#ifndef BRAVE_COMPONENTS_BRAVE_USER_MODEL_INSTALLER_BROWSER_USER_MODEL_FILE_SERVICE_H_  NOLINT  // NOLINT
+#define BRAVE_COMPONENTS_BRAVE_USER_MODEL_INSTALLER_BROWSER_USER_MODEL_FILE_SERVICE_H_  NOLINT  // NOLINT
 
 #include <memory>
 #include <string>
@@ -14,17 +14,22 @@
 #include "base/memory/weak_ptr.h"
 #include "base/observer_list.h"
 #include "brave/components/brave_component_updater/browser/brave_component.h"
-#include "brave/components/brave_usermodel_parameters/browser/parameters.h"
 
 using brave_component_updater::BraveComponent;
 
-namespace brave_usermodel_parameters {
+namespace brave_user_model_installer {
 
-class UsermodelParameterService : public BraveComponent {
+struct UserModelFileInfo {
+  std::string model_id;
+  uint16_t version;
+  base::FilePath path;
+};
+
+class UserModelFileService : public BraveComponent {
  public:
   class Observer : public base::CheckedObserver {
    public:
-    virtual void OnUserModelUpdated(
+    virtual void OnUserModelFilesUpdated(
         const std::string& model_id,
         const base::FilePath& model_path) = 0;
 
@@ -32,11 +37,11 @@ class UsermodelParameterService : public BraveComponent {
     ~Observer() override = default;
   };
 
-  explicit UsermodelParameterService(Delegate* delegate);
-  ~UsermodelParameterService() override;
+  explicit UserModelFileService(Delegate* delegate);
+  ~UserModelFileService() override;
 
-  UsermodelParameterService(const UsermodelParameterService&) = delete;
-  UsermodelParameterService& operator=(const UsermodelParameterService&) =
+  UserModelFileService(const UserModelFileService&) = delete;
+  UserModelFileService& operator=(const UserModelFileService&) =
       delete;
 
   void AddObserver(
@@ -46,9 +51,7 @@ class UsermodelParameterService : public BraveComponent {
   void NotifyObservers(
       const std::string& model_id,
       const base::FilePath& model_path);
-  base::FilePath GetModelPath(
-      const std::string& model_id);
-  ParametersInfo GetParametersFilePathForModel(
+  base::Optional<base::FilePath> GetPath(
       const std::string& model_id);
 
  private:
@@ -60,11 +63,11 @@ class UsermodelParameterService : public BraveComponent {
       const base::FilePath& install_dir,
       const std::string& manifest_json);
 
+  std::map<std::string, UserModelFileInfo> user_model_files_;
   base::ObserverList<Observer> observers_;
-  std::unique_ptr<Parameters> parameters_;
-  base::WeakPtrFactory<UsermodelParameterService> weak_factory_{this};
+  base::WeakPtrFactory<UserModelFileService> weak_factory_{this};
 };
 
-}  // namespace brave_usermodel_parameters
+}  // namespace brave_user_model_installer
 
-#endif  // BRAVE_COMPONENTS_BRAVE_USERMODEL_PARAMETERS_BRAVE_USERMODEL_PARAMETER_SERVICE_H_
+#endif  // BRAVE_COMPONENTS_BRAVE_USER_MODEL_INSTALLER_BROWSER_USER_MODEL_FILE_SERVICE_H_  NOLINT

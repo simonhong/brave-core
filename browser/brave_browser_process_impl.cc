@@ -44,7 +44,7 @@
 #include "content/public/browser/browser_thread.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
-#include "brave/components/brave_usermodel_parameters/browser/brave_usermodel_parameter_service.h"
+#include "brave/components/brave_user_model_installer/browser/user_model_file_service.h"
 
 #if BUILDFLAG(ENABLE_NATIVE_NOTIFICATIONS)
 #include "chrome/browser/notifications/notification_platform_bridge.h"
@@ -195,7 +195,7 @@ void BraveBrowserProcessImpl::StartBraveServices() {
 #if BUILDFLAG(ENABLE_SPEEDREADER)
   speedreader_whitelist();
 #endif
-  usermodel_parameter_service();
+  user_model_file_service();
   // Now start the local data files service, which calls all observers.
   local_data_files_service()->Start();
 }
@@ -405,12 +405,12 @@ BraveBrowserProcessImpl::speedreader_whitelist() {
 }
 #endif  // BUILDFLAG(ENABLE_SPEEDREADER)
 
-brave_usermodel_parameters::UsermodelParameterService*
-BraveBrowserProcessImpl::usermodel_parameter_service() {
-  if (!usermodel_parameter_service_) {
-    usermodel_parameter_service_.reset(
-        new brave_usermodel_parameters::UsermodelParameterService(
+brave_user_model_installer::UserModelFileService*
+BraveBrowserProcessImpl::user_model_file_service() {
+  if (!user_model_file_service_) {
+    user_model_file_service_.reset(
+        new brave_user_model_installer::UserModelFileService(
             brave_component_updater_delegate()));
   }
-  return usermodel_parameter_service_.get();
+  return user_model_file_service_.get();
 }

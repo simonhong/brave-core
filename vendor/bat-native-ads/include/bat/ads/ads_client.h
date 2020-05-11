@@ -104,6 +104,10 @@ class ADS_EXPORT AdsClient {
       const std::string& language,
       LoadCallback callback) const = 0;
 
+  // Shoudl return path to user model file for given model id
+  virtual std::string GetUserModelFilePath(
+      const std::string& model_id) = 0;
+
   // Should return |true| if the browser is active in the foreground; otherwise,
   // should return |false|
   virtual bool IsForeground() const = 0;

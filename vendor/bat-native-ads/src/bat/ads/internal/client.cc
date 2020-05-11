@@ -5,6 +5,7 @@
 
 #include "bat/ads/internal/client.h"
 
+#include "base/files/file_path.h"
 #include "bat/ads/ad_history.h"
 #include "bat/ads/purchase_intent_signal_history.h"
 #include "bat/ads/internal/classification_helper.h"
@@ -576,7 +577,7 @@ std::string Client::GetPath() const {
   const std::string path = ads_client_->GetPath();
   base::FilePath file_path(path);
 
-  file_path.AppendASCII("client.json");
+  file_path = file_path.AppendASCII("client.json");
 
   return file_path.value();
 }

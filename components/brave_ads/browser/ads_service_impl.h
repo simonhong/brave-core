@@ -24,7 +24,7 @@
 #include "brave/components/brave_ads/browser/ads_service.h"
 #include "brave/components/brave_ads/browser/background_helper.h"
 #include "brave/components/brave_ads/browser/notification_helper.h"
-#include "brave/components/brave_usermodel_parameters/browser/brave_usermodel_parameter_service.h"
+#include "brave/components/brave_user_model_installer/browser/user_model_file_service.h"
 #include "brave/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
 #include "brave/components/brave_rewards/browser/rewards_notification_service_observer.h"
 #include "chrome/browser/notifications/notification_handler.h"
@@ -36,7 +36,7 @@
 #include "ui/base/idle/idle.h"
 
 using brave_rewards::RewardsNotificationService;
-using brave_usermodel_parameters::UsermodelParameterService;
+using brave_user_model_installer::UserModelFileService;
 
 class NotificationDisplayService;
 class Profile;
@@ -62,7 +62,7 @@ class AdsServiceImpl : public AdsService,
                        public ads::AdsClient,
                        public history::HistoryServiceObserver,
                        BackgroundHelper::Observer,
-                       public UsermodelParameterService::Observer,
+                       public UserModelFileService::Observer,
                        public base::SupportsWeakPtr<AdsServiceImpl> {
  public:
   // AdsService implementation
@@ -73,7 +73,7 @@ class AdsServiceImpl : public AdsService,
   AdsServiceImpl& operator=(const AdsServiceImpl&) = delete;
 
   // BraveUserModelInstaller::Observer
-  void OnUserModelUpdated(
+  void OnUserModelFilesUpdated(
       const std::string& model_name,
       const base::FilePath& model_path) override;
 
@@ -380,6 +380,8 @@ class AdsServiceImpl : public AdsService,
   void LoadUserModelForLanguage(
       const std::string& language,
       ads::LoadCallback callback) const override;
+  std::string GetUserModelFilePath(
+      const std::string& model_id) override;
 
   void ShowNotification(
       std::unique_ptr<ads::AdNotificationInfo> info) override;

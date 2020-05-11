@@ -74,14 +74,16 @@ class AdsImpl : public Ads {
       ShutdownCallback callback) override;
 
   void LoadUserModel();
+  void LoadPurchaseIntentModel();
   void OnUserModelLoaded(
       const Result result,
       const std::string& json);
-  void OnUserModelUpdated(
+  void OnUserModelFilesUpdated(
       const std::string& model_id,
       const std::string& model_path) override;
-  std::string GetUserModelData(
-      const base::FilePath& model_Path);
+  void OnPurchaseIntentModelFileLoaded(
+      const Result result,
+      const std::string& json);
   void InitializeUserModel(
       const std::string& json,
       const std::string& language);

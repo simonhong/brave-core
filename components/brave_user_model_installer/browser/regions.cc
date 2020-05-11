@@ -3,9 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/brave_usermodel_parameters/browser/regions.h"
+#include "brave/components/brave_user_model_installer/browser/regions.h"
 
-namespace brave_usermodel_parameters {
+namespace brave_user_model_installer {
 
 base::Optional<RegionInfo> Regions::GetRegionInfo(
     const std::string& country_code) {
@@ -17,4 +17,4 @@ base::Optional<RegionInfo> Regions::GetRegionInfo(
   return base::nullopt;
 }
 
-}  // namespace brave_usermodel_parameters
+}  // namespace brave_user_model_installer

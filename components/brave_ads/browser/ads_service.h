@@ -125,7 +125,7 @@ class AdsService : public KeyedService {
   virtual void ResetTheWholeState(
       const base::Callback<void(bool)>& callback) = 0;
 
-  virtual void OnUserModelUpdated(
+  virtual void OnUserModelFilesUpdated(
       const std::string& model_id,
       const base::FilePath& model_path) = 0;
 };

@@ -289,11 +289,7 @@ AdsServiceImpl::AdsServiceImpl(Profile* profile) :
   MaybeShowOnboarding();
 #endif
 
-  g_brave_browser_process->usermodel_parameter_service()->AddObserver(this);
-  std::cout << "*** DEBUG A: AdsService added as observer\n";
-
-  // TODO(Moritz Haller): Receive path on startup, call explicitely?
-  // g_brave_browser_process->usermodel_parameter_service()->GetManifestPath();
+  g_brave_browser_process->user_model_file_service()->AddObserver(this);
 
   MaybeStart(false);
 }
@@ -302,7 +298,7 @@ AdsServiceImpl::~AdsServiceImpl() {
   file_task_runner_->DeleteSoon(FROM_HERE, bundle_state_backend_.release());
 }
 
-void AdsServiceImpl::OnUserModelUpdated(
+void AdsServiceImpl::OnUserModelFilesUpdated(
     const std::string& model_id,
     const base::FilePath& model_path) {
   std::cout << "*** DEBUG 3: AdsService got notified\n";
@@ -317,7 +313,7 @@ void AdsServiceImpl::OnUserModelUpdated(
   }
 
   const std::string model_path_string = model_path.value();
-  bat_ads_->OnUserModelUpdated(model_id, model_path_string);
+  bat_ads_->OnUserModelFilesUpdated(model_id, model_path_string);
 }
 
 bool AdsServiceImpl::IsSupportedLocale() const {
@@ -386,20 +382,6 @@ void AdsServiceImpl::OnPageLoaded(
   if (!connected()) {
     return;
   }
-
-  // TODO(Moritz Haller): Delete, just for debugging
-  std::cout << "*** DEBUG B: Call OnUserModelUpdated in constructor\n";
-
-  const std::string model_path_raw = "/Users/moritzhaller/Library/Application Support/BraveSoftware/Brave-Browser-Development/oldkbaailkiinmopalbhaidpjdndifpa/1.0.3/purchase-intent-classifier-en.json";
-  base::FilePath model_path = base::FilePath::FromUTF8Unsafe(model_path_raw);
-
-  std::string kPurchaseIntentModelId = "loighdbokjikidnmlfddgidbkhodedgm";
-
-  // base::FilePath model_path = g_brave_browser_process->
-  //     usermodel_parameter_service()->GetModelPath(kPurchaseIntentModelId);
-
-  std::cout << "*** DEBUG C: " << model_path.value() << "\n";
-  OnUserModelUpdated(kPurchaseIntentModelId, model_path);
 
   bat_ads_->OnPageLoaded(url, content);
 }
@@ -1906,6 +1888,17 @@ void AdsServiceImpl::LoadUserModelForLanguage(
   const auto resource_id = GetUserModelResourceId(language);
   const auto user_model = LoadDataResourceAndDecompressIfNeeded(resource_id);
   callback(ads::Result::SUCCESS, user_model);
+}
+
+std::string AdsServiceImpl::GetUserModelFilePath(
+    const std::string& model_id) {
+  std::string path;
+  if (base::Optional<base::FilePath> model_path = g_brave_browser_process->
+      user_model_file_service()->GetPath(model_id)) {
+      return model_path->value();
+  }
+
+  return path;
 }
 
 void AdsServiceImpl::ShowNotification(

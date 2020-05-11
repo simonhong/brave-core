@@ -51,6 +51,12 @@ class AdsClientMojoBridge
       std::vector<std::string>* out_languages) override;
   void GetUserModelLanguages(
       GetUserModelLanguagesCallback callback) override;
+  bool GetUserModelFilePath(
+      const std::string& model_name,
+      std::string* out_path) override;
+  void GetUserModelFilePath(
+      const std::string& model_name,
+      LoadJsonSchemaCallback callback) override;
   bool GetAdsPerHour(
       uint64_t* out_ads_per_hour) override;
   void GetAdsPerHour(

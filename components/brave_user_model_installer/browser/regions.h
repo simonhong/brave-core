@@ -3,15 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_COMPONENTS_BRAVE_USERMODEL_PARAMETERS_REGIONS_H_
-#define BRAVE_COMPONENTS_BRAVE_USERMODEL_PARAMETERS_REGIONS_H_
+#ifndef BRAVE_COMPONENTS_BRAVE_USER_MODEL_INSTALLER_BROWSER_REGIONS_H_
+#define BRAVE_COMPONENTS_BRAVE_USER_MODEL_INSTALLER_BROWSER_REGIONS_H_
 
 #include <string>
 #include <vector>
 
 #include "base/optional.h"
 
-namespace brave_usermodel_parameters {
+namespace brave_user_model_installer {
 
 struct RegionInfo {
   std::string region;
@@ -37,6 +37,6 @@ class Regions {
       const std::string& country_code);
 };
 
-}  // namespace brave_usermodel_parameters
+}  // namespace brave_user_model_installer
 
-#endif  // BRAVE_COMPONENTS_BRAVE_USERMODEL_PARAMETERS_REGIONS_H_
+#endif  // BRAVE_COMPONENTS_BRAVE_USER_MODEL_INSTALLER_BROWSER_REGIONS_H_

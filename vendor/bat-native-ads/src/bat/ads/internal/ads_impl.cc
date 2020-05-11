@@ -96,9 +96,7 @@ AdsImpl::AdsImpl(AdsClient* ads_client)
       ad_conversions_(std::make_unique<AdConversions>(
           this, ads_client, client_.get())),
       user_model_(nullptr),
-      purchase_intent_classifier_(std::make_unique<PurchaseIntentClassifier>(
-          kPurchaseIntentSignalLevel, kPurchaseIntentClassificationThreshold,
-              kPurchaseIntentSignalDecayTimeWindow)),
+      purchase_intent_classifier_(std::make_unique<PurchaseIntentClassifier>()),
       is_initialized_(false),
       is_confirmations_ready_(false),
       ad_notifications_(std::make_unique<AdNotifications>(this, ads_client)),
@@ -273,6 +271,14 @@ void AdsImpl::LoadUserModel() {
 
   auto callback = std::bind(&AdsImpl::OnUserModelLoaded, this, _1, _2);
   ads_client_->LoadUserModelForLanguage(language, callback);
+}
+
+void AdsImpl::LoadPurchaseIntentModel() {
+  std::string path = ads_client_->GetUserModelFilePath(
+      kPurchaseIntentModelId);
+  auto callback = std::bind(
+      &AdsImpl::OnPurchaseIntentModelFileLoaded, this, _1, _2);
+  ads_client_->Load(path, callback);
 }
 
 void AdsImpl::OnUserModelLoaded(
@@ -622,63 +628,32 @@ void AdsImpl::ChangeLocale(
   }
 
   LoadUserModel();
+  LoadPurchaseIntentModel();
 }
 
-void AdsImpl::OnUserModelUpdated(
+void AdsImpl::OnUserModelFilesUpdated(
     const std::string& model_id,
     const std::string& model_path) {
-  BLOG(INFO) << "*** DEBUG 5: " << "Ads Impl got notified, model_path: "
-      << model_path;
-
-  base::FilePath path;
-  base::PathService::Get(chrome::DIR_USER_DATA, &path);
-
-  base::FilePath full_model_path =
-      base::FilePath::FromUTF8Unsafe(model_path);
-  std::vector<base::FilePath::StringType> full_model_path_components;
-  full_model_path.GetComponents(&full_model_path_components);
-  std::vector<base::FilePath::StringType> part_model_path_components(
-      full_model_path_components.end() - 3,
-      full_model_path_components.end());
-  base::FilePath part_model_path;
-  for (const auto& component : part_model_path_components) {
-    part_model_path = part_model_path.Append(component);
+  if (model_id == kPurchaseIntentModelId) {
+    auto callback = std::bind(
+        &AdsImpl::OnPurchaseIntentModelFileLoaded, this, _1, _2);
+    ads_client_->Load(model_path, callback);
   }
-
-  path = path.Append(part_model_path);
-  // std::string model_json = GetUserModelData(path);
-  std::string model_json;
-  if (PathExists(path)) {
-    BLOG(INFO) << "*** DEBUG 6 loading model at: " << path;
-    base::ReadFileToString(path, &model_json);
-    BLOG(INFO) << "*** DEBUG 6 with json: " << model_json;
-  }
-  BLOG(INFO) << "*** DEBUG 8 actual path exists" << PathExists(full_model_path);
-  BLOG(INFO) << "*** DEBUG 9 dummy path exists" <<
-      PathExists(full_model_path.AppendASCII("foobar"));
-
-  // if (id == purchase intent) {
-//   if (json_string.empty()) {
-//     BLOG(INFO) << ": User model data is empty";
-//     return;
-//   }
-
-//   base::Optional<base::Value> user_model_value =
-//       base::JSONReader::Read(json_string);
-
-//   if (!user_model_value) {
-//     BLOG(INFO) << ": User model data is invalid";
-//     return;
-//   }
-  // }
 }
 
-std::string AdsImpl::GetUserModelData(
-    const base::FilePath& model_path) {
-  std::string contents;
-  bool success = base::ReadFileToString(model_path, &contents);
-  BLOG(INFO) << "*** DEBUG read file success " << success;
-  return contents;
+void AdsImpl::OnPurchaseIntentModelFileLoaded(
+    const Result result,
+    const std::string& json) {
+  if (result != SUCCESS) {
+    BLOG(0, "Failed to load purchase intent model update");
+    return;
+  }
+
+  purchase_intent_classifier_.reset(new PurchaseIntentClassifier());
+  purchase_intent_classifier_->Initialize(json);
+
+  BLOG(3, "Successfully loaded and initialized purchase intent model");
+  return;
 }
 
 void AdsImpl::OnPageLoaded(

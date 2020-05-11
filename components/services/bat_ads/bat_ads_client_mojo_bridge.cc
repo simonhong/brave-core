@@ -170,6 +170,18 @@ void BatAdsClientMojoBridge::LoadUserModelForLanguage(
       base::BindOnce(&OnLoadUserModelForLanguage, std::move(callback)));
 }
 
+std::string BatAdsClientMojoBridge::GetUserModelFilePath(
+    const std::string& model_name) {
+  std::string path;
+
+  if (!connected()) {
+    return path;
+  }
+
+  bat_ads_client_->GetUserModelFilePath(model_name, &path);
+  return path;
+}
+
 bool BatAdsClientMojoBridge::IsForeground() const {
   if (!connected()) {
     return false;
@@ -325,7 +337,7 @@ std::string BatAdsClientMojoBridge::GetPath() {
     return path;
   }
 
-  bat_ads_client_->GetPath(name, &path);
+  bat_ads_client_->GetPath(&path);
   return path;
 }
 

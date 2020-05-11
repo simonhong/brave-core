@@ -200,6 +200,20 @@ void AdsClientMojoBridge::GetUserModelLanguages(
   std::move(callback).Run(ads_client_->GetUserModelLanguages());
 }
 
+bool AdsClientMojoBridge::GetUserModelFilePath(
+    const std::string& model_name,
+    std::string* out_path) {
+  DCHECK(out_path);
+  *out_path = ads_client_->GetUserModelFilePath(model_name);
+  return true;
+}
+
+void AdsClientMojoBridge::GetUserModelFilePath(
+    const std::string& model_name,
+    GetUserModelFilePathCallback callback) {
+  std::move(callback).Run(ads_client_->GetUserModelFilePath(model_name));
+}
+
 void AdsClientMojoBridge::SetIdleThreshold(
     const int32_t threshold) {
   ads_client_->SetIdleThreshold(threshold);

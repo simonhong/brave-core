@@ -213,11 +213,11 @@ void BatAdsImpl::ToggleFlagAd(
   std::move(callback).Run(creative_instance_id, flagged_result);
 }
 
-void BatAdsImpl::OnUserModelUpdated(
+void BatAdsImpl::OnUserModelFilesUpdated(
     const std::string& model_name,
     const std::string& model_path) {
   std::cout << "*** DEBUG 4: Bat Ads got notified\n";
-  ads_->OnUserModelUpdated(model_name, model_path);
+  ads_->OnUserModelFilesUpdated(model_name, model_path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

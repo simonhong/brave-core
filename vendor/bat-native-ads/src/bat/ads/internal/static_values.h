@@ -48,10 +48,7 @@ const int kExpiredAdConversionFrequency = 5 * base::Time::kSecondsPerMinute;
 
 const char kDefaultUserModelLanguage[] = "en";
 
-const uint16_t kPurchaseIntentSignalLevel = 1;
-const uint16_t kPurchaseIntentClassificationThreshold = 10;
-const uint64_t kPurchaseIntentSignalDecayTimeWindow =
-    base::Time::kSecondsPerHour * base::Time::kHoursPerDay * 7;
+const char kPurchaseIntentModelId[] = "loighdbokjikidnmlfddgidbkhodedgm";
 const uint16_t kPurchaseIntentMaxSegments = 3;
 
 const int kDoNotDisturbFromHour = 21;  // 9pm

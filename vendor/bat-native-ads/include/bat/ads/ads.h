@@ -212,8 +212,9 @@ class ADS_EXPORT Ads {
       const std::string& creative_set_id,
       const bool flagged) = 0;
 
-  // TODO(Moritz Haller): Ddd description
-  virtual void OnUserModelUpdated(
+  // Should be called when user model files have been updated in the
+  // |BraveUserModelInstaller| component
+  virtual void OnUserModelFilesUpdated(
       const std::string& model_id,
       const std::string& model_path) = 0;
 
