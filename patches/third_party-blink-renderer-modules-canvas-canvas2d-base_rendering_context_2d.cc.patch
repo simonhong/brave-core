@@ -1,8 +1,52 @@
 diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-index 9ce2506096723d04b7aab6267d5c452cfe0424e8..87fafafc4cdad52cfe5cc9f62e78950358778cf2 100644
+index 9ce2506096723d04b7aab6267d5c452cfe0424e8..ccd60f85467462435e1d04e43041a89940fcd360 100644
 --- a/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
 +++ b/third_party/blink/renderer/modules/canvas/canvas2d/base_rendering_context_2d.cc
-@@ -1545,6 +1545,7 @@ ImageData* BaseRenderingContext2D::createImageData(
+@@ -779,16 +779,20 @@ void BaseRenderingContext2D::clip(Path2D* dom_path,
+   ClipInternal(dom_path->GetPath(), winding_rule_string);
+ }
+ 
+-bool BaseRenderingContext2D::isPointInPath(const double x,
++bool BaseRenderingContext2D::isPointInPath(ScriptState* script_state,
++                                           const double x,
+                                            const double y,
+                                            const String& winding_rule_string) {
++  BRAVE_IS_POINT_IN_PATH
+   return IsPointInPathInternal(path_, x, y, winding_rule_string);
+ }
+ 
+-bool BaseRenderingContext2D::isPointInPath(Path2D* dom_path,
++bool BaseRenderingContext2D::isPointInPath(ScriptState* script_state,
++                                           Path2D* dom_path,
+                                            const double x,
+                                            const double y,
+                                            const String& winding_rule_string) {
++  BRAVE_IS_POINT_IN_PATH
+   return IsPointInPathInternal(dom_path->GetPath(), x, y, winding_rule_string);
+ }
+ 
+@@ -813,13 +817,18 @@ bool BaseRenderingContext2D::IsPointInPathInternal(
+                        SkFillTypeToWindRule(ParseWinding(winding_rule_string)));
+ }
+ 
+-bool BaseRenderingContext2D::isPointInStroke(const double x, const double y) {
++bool BaseRenderingContext2D::isPointInStroke(ScriptState* script_state,
++                                             const double x,
++                                             const double y) {
++  BRAVE_IS_POINT_IN_STROKE
+   return IsPointInStrokeInternal(path_, x, y);
+ }
+ 
+-bool BaseRenderingContext2D::isPointInStroke(Path2D* dom_path,
++bool BaseRenderingContext2D::isPointInStroke(ScriptState* script_state,
++                                             Path2D* dom_path,
+                                              const double x,
+                                              const double y) {
++  BRAVE_IS_POINT_IN_STROKE
+   return IsPointInStrokeInternal(dom_path->GetPath(), x, y);
+ }
+ 
+@@ -1545,6 +1554,7 @@ ImageData* BaseRenderingContext2D::createImageData(
  }
  
  ImageData* BaseRenderingContext2D::getImageData(
@@ -10,7 +54,7 @@ index 9ce2506096723d04b7aab6267d5c452cfe0424e8..87fafafc4cdad52cfe5cc9f62e789503
      int sx,
      int sy,
      int sw,
-@@ -1624,6 +1625,7 @@ ImageData* BaseRenderingContext2D::getImageData(
+@@ -1624,6 +1634,7 @@ ImageData* BaseRenderingContext2D::getImageData(
      return nullptr;
    }
  
