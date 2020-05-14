@@ -1473,16 +1473,29 @@ void LedgerImpl::SaveUnblindedTokenList(
   bat_database_->SaveUnblindedTokenList(std::move(list), callback);
 }
 
-void LedgerImpl::MarkUblindedTokensAsSpent(
+void LedgerImpl::MarkUnblindedTokensAsSpent(
     const std::vector<std::string>& ids,
     ledger::RewardsType redeem_type,
     const std::string& redeem_id,
     ledger::ResultCallback callback) {
-  bat_database_->MarkUblindedTokensAsSpent(
+  bat_database_->MarkUnblindedTokensAsSpent(
       ids,
       redeem_type,
       redeem_id,
       callback);
+}
+
+void LedgerImpl::MarkUnblindedTokensAsReserved(
+    const std::vector<std::string>& ids,
+    const std::string& contribution_id,
+    ledger::ResultCallback callback) {
+  bat_database_->MarkUnblindedTokensAsReserved(ids, contribution_id, callback);
+}
+
+void LedgerImpl::MarkUnblindedTokensAsFree(
+    const std::string& contribution_id,
+    ledger::ResultCallback callback) {
+  bat_database_->MarkUnblindedTokensAsFree(contribution_id, callback);
 }
 
 void LedgerImpl::GetUnblindedTokensByTriggerIds(

@@ -486,7 +486,7 @@ class MockLedgerImpl : public LedgerImpl {
   MOCK_METHOD2(SaveUnblindedTokenList, void(
     ledger::UnblindedTokenList, ledger::ResultCallback));
 
-  MOCK_METHOD4(MarkUblindedTokensAsSpent, void(
+  MOCK_METHOD4(MarkUnblindedTokensAsSpent, void(
       const std::vector<std::string>&,
       ledger::RewardsType,
       const std::string&,

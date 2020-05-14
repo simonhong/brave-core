@@ -552,10 +552,19 @@ class LedgerImpl : public ledger::Ledger {
     ledger::UnblindedTokenList list,
     ledger::ResultCallback callback);
 
-  virtual void MarkUblindedTokensAsSpent(
+  virtual void MarkUnblindedTokensAsSpent(
       const std::vector<std::string>& ids,
       ledger::RewardsType redeem_type,
       const std::string& redeem_id,
+      ledger::ResultCallback callback);
+
+  void MarkUnblindedTokensAsReserved(
+      const std::vector<std::string>& ids,
+      const std::string& contribution_id,
+      ledger::ResultCallback callback);
+
+  void MarkUnblindedTokensAsFree(
+      const std::string& contribution_id,
       ledger::ResultCallback callback);
 
   void GetUnblindedTokensByTriggerIds(

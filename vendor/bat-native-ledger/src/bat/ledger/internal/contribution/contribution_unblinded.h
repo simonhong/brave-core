@@ -110,6 +110,20 @@ class Unblinded {
       const bool single_publisher,
       ledger::ResultCallback callback);
 
+  void ReserveStepSaved(
+      const ledger::Result result,
+      const std::vector<ledger::UnblindedToken>& list,
+      const std::string& contribution_string,
+      const std::vector<ledger::CredsBatchType>& types,
+      ledger::ResultCallback callback);
+
+  void OnMarkUnblindedTokensAsReserved(
+      const ledger::Result result,
+      const std::vector<ledger::UnblindedToken>& list,
+      const std::string& contribution_string,
+      const std::vector<ledger::CredsBatchType>& types,
+      ledger::ResultCallback callback);
+
   bat_ledger::LedgerImpl* ledger_;  // NOT OWNED
   std::unique_ptr<braveledger_credentials::Credentials> credentials_;
 };

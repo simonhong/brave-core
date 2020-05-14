@@ -161,6 +161,9 @@ bool DatabaseUnblindedToken::Migrate(
     case 20: {
       return MigrateToV20(transaction);
     }
+    case 23: {
+      return MigrateToV23(transaction);
+    }
     default: {
       return true;
     }
@@ -358,6 +361,21 @@ bool DatabaseUnblindedToken::MigrateToV20(ledger::DBTransaction* transaction) {
   return true;
 }
 
+bool DatabaseUnblindedToken::MigrateToV23(ledger::DBTransaction* transaction) {
+  DCHECK(transaction);
+
+  const std::string query = base::StringPrintf(
+      "ALTER TABLE %s ADD reserved_at TIMESTAMP DEFAULT 0 NOT NULL;",
+      kTableName);
+
+  auto command = ledger::DBCommand::New();
+  command->type = ledger::DBCommand::Type::EXECUTE;
+  command->command = query;
+  transaction->commands.push_back(std::move(command));
+
+  return true;
+}
+
 void DatabaseUnblindedToken::InsertOrUpdateList(
     ledger::UnblindedTokenList list,
     ledger::ResultCallback callback) {
@@ -494,6 +512,110 @@ void DatabaseUnblindedToken::MarkRecordListAsSpent(
   BindInt64(command.get(), 0, braveledger_time_util::GetCurrentTimeStamp());
   BindString(command.get(), 1, redeem_id);
   BindInt(command.get(), 2, static_cast<int>(redeem_type));
+
+  transaction->commands.push_back(std::move(command));
+
+  auto transaction_callback = std::bind(&OnResultCallback,
+      _1,
+      callback);
+
+  ledger_->RunDBTransaction(std::move(transaction), transaction_callback);
+}
+
+void DatabaseUnblindedToken::MarkRecordListAsReserved(
+    const std::vector<std::string>& ids,
+    const std::string& redeem_id,
+    ledger::ResultCallback callback) {
+  if (ids.empty()) {
+    callback(ledger::Result::LEDGER_ERROR);
+    return;
+  }
+
+  auto transaction = ledger::DBTransaction::New();
+
+  const std::string id_values = GenerateStringInCase(ids);
+
+  std::string query = base::StringPrintf(
+      "UPDATE %s SET redeem_id = ?, reserved_at = ? "
+      "WHERE ( "
+        "SELECT COUNT(*) FROM %s "
+        "WHERE reserved_at = 0 AND token_id IN (%s) "
+      ") = ? AND token_id IN (%s)",
+      kTableName,
+      kTableName,
+      id_values.c_str(),
+      id_values.c_str());
+
+  auto command = ledger::DBCommand::New();
+  command->type = ledger::DBCommand::Type::RUN;
+  command->command = query;
+
+  BindString(command.get(), 0, redeem_id);
+  BindInt64(command.get(), 1, braveledger_time_util::GetCurrentTimeStamp());
+  BindInt64(command.get(), 2, ids.size());
+
+  transaction->commands.push_back(std::move(command));
+
+  query = base::StringPrintf(
+      "SELECT token_id FROM %s "
+      "WHERE reserved_at != 0 AND token_id IN (%s)",
+      kTableName,
+      id_values.c_str());
+
+  command = ledger::DBCommand::New();
+  command->type = ledger::DBCommand::Type::READ;
+  command->command = query;
+
+  transaction->commands.push_back(std::move(command));
+
+  auto transaction_callback =
+      std::bind(&DatabaseUnblindedToken::OnMarkRecordListAsReserved,
+          this,
+          _1,
+          ids.size(),
+          callback);
+
+  ledger_->RunDBTransaction(std::move(transaction), transaction_callback);
+}
+
+void DatabaseUnblindedToken::OnMarkRecordListAsReserved(
+    ledger::DBCommandResponsePtr response,
+    size_t expected_row_count,
+    ledger::ResultCallback callback) {
+  if (!response ||
+      response->status != ledger::DBCommandResponse::Status::RESPONSE_OK) {
+    callback(ledger::Result::LEDGER_ERROR);
+    return;
+  }
+
+  if (response->result->get_records().size() != expected_row_count) {
+    callback(ledger::Result::LEDGER_ERROR);
+    return;
+  }
+
+  callback(ledger::Result::LEDGER_OK);
+}
+
+void DatabaseUnblindedToken::MarkRecordListAsFree(
+    const std::string& redeem_id,
+    ledger::ResultCallback callback) {
+  if (redeem_id.empty()) {
+    callback(ledger::Result::LEDGER_ERROR);
+    return;
+  }
+
+  auto transaction = ledger::DBTransaction::New();
+
+  const std::string query = base::StringPrintf(
+      "UPDATE %s SET redeem_id = '', reserved_at = 0 "
+      "WHERE redeem_id = ?",
+      kTableName);
+
+  auto command = ledger::DBCommand::New();
+  command->type = ledger::DBCommand::Type::RUN;
+  command->command = query;
+
+  BindString(command.get(), 0, redeem_id);
 
   transaction->commands.push_back(std::move(command));
 
