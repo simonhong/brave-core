@@ -60,7 +60,7 @@ export interface Props {
   binanceSupported: boolean
 }
 
-type ActiveTabType = 'backgroundImage' | 'braveStats' | 'braveRewards' | 'topSites' | 'clock' | 'moreCards'
+type ActiveTabType = 'BackgroundImage' | 'BraveStats' | 'Rewards' | 'TopSites' | 'Clock' | 'moreCards'
 
 interface State {
   activeTab: number
@@ -109,7 +109,7 @@ export default class Settings extends React.PureComponent<Props, State> {
 
   get activeTabOptions (): ActiveTabType[] {
     return [
-      'backgroundImage', 'braveStats', 'braveRewards', 'topSites', 'clock', 'moreCards'
+      'BackgroundImage', 'BraveStats', 'Rewards', 'TopSites', 'Clock', 'moreCards'
     ]
   }
 
@@ -172,6 +172,7 @@ export default class Settings extends React.PureComponent<Props, State> {
                 <SettingsSidebarActiveButtonSlider translateTo={activeTab} />
                 {
                   this.activeTabOptions.map((tabName, index) => {
+                    const name = index === (this.activeTabOptions.length - 1) ? tabName : `show${tabName}`
                     return (
                       <SettingsSidebarButton
                         key={`sidebar-button-${index}`}
@@ -180,7 +181,7 @@ export default class Settings extends React.PureComponent<Props, State> {
                       >
                         {this.getTabIcon(index)}
                         <SettingsSidebarButtonText>
-                          {getLocale(tabName)}
+                          {getLocale(name)}
                         </SettingsSidebarButtonText>
                       </SettingsSidebarButton>
                     )
