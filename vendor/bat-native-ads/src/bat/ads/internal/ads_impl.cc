@@ -86,6 +86,7 @@ AdsImpl::AdsImpl(AdsClient* ads_client)
       client_(std::make_unique<Client>(this, ads_client)),
       bundle_(std::make_unique<Bundle>(this, ads_client)),
       ads_serve_(std::make_unique<AdsServe>(ads_client, bundle_.get())),
+      ads_locale_helper_(std::make_unique<AdsLocaleHelper>(ads_client)),
       frequency_capping_(std::make_unique<FrequencyCapping>(client_.get())),
       ad_conversions_(std::make_unique<AdConversions>(
           this, ads_client, client_.get())),
@@ -208,6 +209,7 @@ void AdsImpl::InitializeStep5(
   }
 
   ads_serve_->DownloadCatalog();
+  ads_locale_helper_->GetState();
 }
 
 #if defined(OS_ANDROID)
