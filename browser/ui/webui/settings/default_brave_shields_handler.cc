@@ -28,6 +28,14 @@ void DefaultBraveShieldsHandler::RegisterMessages() {
       base::BindRepeating(&DefaultBraveShieldsHandler::SetAdControlType,
                           base::Unretained(this)));
   web_ui()->RegisterMessageCallback(
+      "getCosmeticFilteringControlType",
+      base::BindRepeating(&DefaultBraveShieldsHandler::GetCosmeticFilteringControlType,
+                          base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
+      "setCosmeticFilteringControlType",
+      base::BindRepeating(&DefaultBraveShieldsHandler::SetCosmeticFilteringControlType,
+                          base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
       "getCookieControlType",
       base::BindRepeating(&DefaultBraveShieldsHandler::GetCookieControlType,
                           base::Unretained(this)));
@@ -78,6 +86,32 @@ void DefaultBraveShieldsHandler::SetAdControlType(const base::ListValue* args) {
                                   value ? ControlType::BLOCK
                                         : ControlType::ALLOW,
                                   GURL());
+}
+
+void DefaultBraveShieldsHandler::GetCosmeticFilteringControlType(
+    const base::ListValue* args) {
+  CHECK_EQ(args->GetSize(), 1U);
+  CHECK(profile_);
+
+  ControlType setting = brave_shields::GetCosmeticFilteringControlType(
+      profile_, GURL());
+
+  AllowJavascript();
+  ResolveJavascriptCallback(
+      args->GetList()[0].Clone(),
+      base::Value(ControlTypeToString(setting)));
+}
+
+void DefaultBraveShieldsHandler::SetCosmeticFilteringControlType(
+    const base::ListValue* args) {
+  CHECK_EQ(args->GetSize(), 1U);
+  CHECK(profile_);
+  std::string value;
+  args->GetString(0, &value);
+
+  brave_shields::SetCosmeticFilteringControlType(profile_,
+                                                 ControlTypeFromString(value),
+                                                 GURL());
 }
 
 void DefaultBraveShieldsHandler::GetCookieControlType(

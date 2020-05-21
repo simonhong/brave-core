@@ -17,6 +17,15 @@ cr.define('settings', function() {
     /**
      * @return {!Promise<string>}
      */
+    getCosmeticFilteringControlType() {}
+    /**
+     * @param {string} value name.
+     */
+    setCosmeticFilteringControlType(value) {}
+
+    /**
+     * @return {!Promise<string>}
+     */
     getCookieControlType() {}
     /**
      * @param {string} value name.
@@ -55,6 +64,16 @@ cr.define('settings', function() {
     /** @override */
     setAdControlType(value) {
       chrome.send('setAdControlType', [value]);
+    }
+
+    /** @override */
+    getCosmeticFilteringControlType() {
+      return cr.sendWithPromise('getCosmeticFilteringControlType');
+    }
+
+    /** @override */
+    setCosmeticFilteringControlType(value) {
+      chrome.send('setCosmeticFilteringControlType', [value]);
     }
 
     /** @override */
